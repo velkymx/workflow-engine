@@ -1,6 +1,6 @@
 # JSON BPMN Execution Schema (v1.0)
 
-This schema defines a compact, expressive format for executable workflows using BPMN concepts—adapted for real-time engines with signal-based communication and optional timer-based scheduling.
+This schema defines a compact, expressive format for executable workflows using BPMN concepts—adapted for real-time engines with signal-based communication, optional timer-based scheduling, and task-level timeouts.
 
 ---
 
@@ -87,10 +87,22 @@ Executes secure JavaScript logic using `vm2`. The returned object updates the in
   "id": "script-1",
   "type": "script",
   "name": "Log Activity",
-  "script": "cmV0dXJuIHsgbG9nZ2VkOiB0cnVlIH0=",  // base64 of: return { logged: true }
+  "script": "cmV0dXJuIHsgbG9nZ2VkOiB0cnVlIH0=",
+  "timeout": {
+    "seconds": 60,
+    "onTimeout": "task-overflow"
+  },
   "next": "end-1"
 }
 ```
+
+| Field         | Type   | Description                                      |
+| ------------- | ------ | ------------------------------------------------ |
+| `script`      | string | Base64-encoded JavaScript to run in VM           |
+| `timeout`     | object | Optional timeout behavior                        |
+| → `seconds`   | number | Number of seconds before timeout triggers        |
+| → `onTimeout` | string | Node to route to if timeout occurs               |
+| `next`        | string | Next node to continue after successful execution |
 
 ---
 
@@ -108,6 +120,10 @@ Displays a form and collects user input. Input is merged into the workflow conte
       { "name": "email", "type": "text", "label": "Email", "required": true },
       { "name": "age", "type": "number", "label": "Age" }
     ]
+  },
+  "timeout": {
+    "seconds": 1200,
+    "onTimeout": "form-timeout"
   },
   "next": "gateway-1"
 }
@@ -187,9 +203,10 @@ Branches logic based on evaluated conditions. The engine tests `condition[]` ent
 
 ## 🕒 Timer Handling Summary
 
-| Use Case                | Supported At | Field                     |
-| ----------------------- | ------------ | ------------------------- |
-| Schedule workflow start | `start`      | `timer.cron` + `timezone` |
+| Use Case                | Supported At     | Field                          |
+| ----------------------- | ---------------- | ------------------------------ |
+| Schedule workflow start | `start`          | `timer.cron` + `timezone`      |
+| Timeout on script/form  | `script`, `form` | `timeout.seconds`, `onTimeout` |
 
 ---
 
@@ -223,4 +240,4 @@ Branches logic based on evaluated conditions. The engine tests `condition[]` ent
 
 ---
 
-This schema enables compact, testable, reactive workflow design across forms, logic, timers, and signals. Use it as the core execution format in your workflow engine.
+This schema enables compact, testable, reactive workflow design across forms, logic, timers, timeouts, and signals. Use it as the core execution format in your workflow engine.
