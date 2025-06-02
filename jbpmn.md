@@ -115,12 +115,10 @@ Displays a form and collects user input. Input is merged into the workflow conte
   "id": "form-1",
   "type": "form",
   "name": "User Input",
-  "formConfig": {
-    "fields": [
-      { "name": "email", "type": "text", "label": "Email", "required": true },
-      { "name": "age", "type": "number", "label": "Age" }
-    ]
-  },
+  "fields": [
+    { "name": "email", "type": "text", "label": "Email", "required": true },
+    { "name": "age", "type": "number", "label": "Age" }
+  ],
   "timeout": {
     "seconds": 1200,
     "onTimeout": "form-timeout"
