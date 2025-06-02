@@ -10,7 +10,13 @@ This schema defines a compact, expressive format for executable workflows using 
 {
   "id": "workflow-id",
   "name": "Workflow Name",
-  "meta": { },
+  "meta": {
+    "version": "1.0.0",
+    "description": "Short summary of what this workflow does",
+    "author": "Your Name or Org",
+    "tags": ["user-registration", "automation"],
+    "createdAt": "2025-06-02T10:00:00Z"
+  },
   "nodes": [ ... ]
 }
 ```
@@ -19,7 +25,7 @@ This schema defines a compact, expressive format for executable workflows using 
 | ------- | ------ | ------------------------------------ |
 | `id`    | string | Unique workflow ID                   |
 | `name`  | string | Human-readable name                  |
-| `meta`  | object | Optional metadata for system use     |
+| `meta`  | object | Optional metadata (see below)        |
 | `nodes` | array  | List of task nodes (see types below) |
 
 ---
@@ -96,13 +102,13 @@ Executes secure JavaScript logic using `vm2`. The returned object updates the in
 }
 ```
 
-| Field         | Type   | Description                                      |
-| ------------- | ------ | ------------------------------------------------ |
-| `script`      | string | Base64-encoded JavaScript to run in VM           |
-| `timeout`     | object | Optional timeout behavior                        |
-| → `seconds`   | number | Number of seconds before timeout triggers        |
-| → `onTimeout` | string | Node to route to if timeout occurs               |
-| `next`        | string | Next node to continue after successful execution |
+| Field       | Type   | Description                                      |
+| ----------- | ------ | ------------------------------------------------ |
+| `script`    | string | Base64-encoded JavaScript to run in VM           |
+| `timeout`   | object | Optional timeout behavior                        |
+| → `seconds` | number | Number of seconds before timeout triggers        |
+| → `next`    | string | Node to route to if timeout occurs               |
+| `next`      | string | Next node to continue after successful execution |
 
 ---
 
@@ -127,26 +133,34 @@ Displays a form and collects user input. Input is merged into the workflow conte
 }
 ```
 
+| Field       | Type   | Description                               |
+| ----------- | ------ | ----------------------------------------- |
+| `fields`    | array  | Input field configuration                 |
+| `timeout`   | object | Optional timeout behavior                 |
+| → `seconds` | number | Number of seconds before timeout triggers |
+| → `next`    | string | Node to route to if timeout occurs        |
+| `next`      | string | Next node after form submission           |
+
 ---
 
 ### 🔀 `gateway`
 
-Branches logic based on evaluated conditions. The engine tests `condition[]` entries in order. You can optionally emit a signal using `signal.throw` inside a condition.
+Branches logic based on evaluated conditions. The engine tests `conditions[]` entries in order. You can optionally emit a signal using `signal.throw` inside a condition.
 
 ```json
 {
   "id": "gateway-1",
   "type": "gateway",
   "name": "Check Role",
-  "condition": [
+  "conditions": [
     {
       "when": "process_data.role === 'admin'",
-      "then": "admin-task",
+      "next": "admin-task",
       "signal": { "throw": "admin:entered" }
     },
     {
       "else": true,
-      "then": "user-task"
+      "next": "user-task"
     }
   ]
 }
@@ -154,10 +168,10 @@ Branches logic based on evaluated conditions. The engine tests `condition[]` ent
 
 | Field            | Type    | Description                            |
 | ---------------- | ------- | -------------------------------------- |
-| `condition[]`    | array   | Ordered list of decision conditions    |
+| `conditions[]`   | array   | Ordered list of decision conditions    |
 | → `when`         | string  | JS expression to evaluate (if present) |
 | → `else`         | boolean | Optional fallback condition            |
-| → `then`         | string  | Node ID to route to if rule matches    |
+| → `next`         | string  | Node ID to route to if rule matches    |
 | → `signal.throw` | string  | Optional signal to emit on match       |
 
 ---
@@ -169,7 +183,7 @@ Branches logic based on evaluated conditions. The engine tests `condition[]` ent
   "id": "evaluate-loan",
   "type": "gateway",
   "name": "Check Credit Score",
-  "condition": [
+  "conditions": [
     {
       "when": "process_data.creditScore >= 700",
       "next": "task-approve"
@@ -191,20 +205,20 @@ Branches logic based on evaluated conditions. The engine tests `condition[]` ent
 
 ## 🔁 Signal Handling Summary
 
-| Use Case                 | Supported At          | Field          |
-| ------------------------ | --------------------- | -------------- |
-| Start workflow on signal | `start`               | `signal.catch` |
-| Emit signal on end       | `end`                 | `signal.throw` |
-| Emit signal on gateway   | `gateway.condition[]` | `signal.throw` |
+| Use Case                 | Supported At           | Field          |
+| ------------------------ | ---------------------- | -------------- |
+| Start workflow on signal | `start`                | `signal.catch` |
+| Emit signal on end       | `end`                  | `signal.throw` |
+| Emit signal on gateway   | `gateway.conditions[]` | `signal.throw` |
 
 ---
 
 ## 🕒 Timer Handling Summary
 
-| Use Case                | Supported At     | Field                          |
-| ----------------------- | ---------------- | ------------------------------ |
-| Schedule workflow start | `start`          | `timer.cron` + `timezone`      |
-| Timeout on script/form  | `script`, `form` | `timeout.seconds`, `onTimeout` |
+| Use Case                | Supported At     | Field                             |
+| ----------------------- | ---------------- | --------------------------------- |
+| Schedule workflow start | `start`          | `timer.cron`, `timer.timezone`    |
+| Timeout on script/form  | `script`, `form` | `timeout.seconds`, `timeout.next` |
 
 ---
 
