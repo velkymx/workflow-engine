@@ -90,7 +90,7 @@ Executes secure JavaScript logic using `vm2`. The returned object updates the in
   "script": "cmV0dXJuIHsgbG9nZ2VkOiB0cnVlIH0=",
   "timeout": {
     "seconds": 60,
-    "onTimeout": "task-overflow"
+    "next": "task-overflow"
   },
   "next": "end-1"
 }
@@ -121,7 +121,7 @@ Displays a form and collects user input. Input is merged into the workflow conte
   ],
   "timeout": {
     "seconds": 1200,
-    "onTimeout": "form-timeout"
+    "next": "form-timeout"
   },
   "next": "gateway-1"
 }
@@ -172,15 +172,15 @@ Branches logic based on evaluated conditions. The engine tests `condition[]` ent
   "condition": [
     {
       "when": "process_data.creditScore >= 700",
-      "then": "task-approve"
+      "next": "task-approve"
     },
     {
       "when": "process_data.creditScore >= 600",
-      "then": "task-review"
+      "next": "task-review"
     },
     {
       "else": true,
-      "then": "task-deny",
+      "next": "task-deny",
       "signal": { "throw": "loan:denied" }
     }
   ]
