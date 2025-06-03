@@ -1,0 +1,81 @@
+{
+  "id": "my_first_workflow",
+  "name": "My First Workflow",
+  "nodes": [
+    {
+      "id": "start_node",
+      "name": "Start Process",
+      "type": "start",
+      "next": "collect_info_form"
+    },
+    {
+      "id": "collect_info_form",
+      "name": "Collect User Info",
+      "type": "form",
+      "next": "process_data_script",
+      "timeout": {
+        "duration": "1m",
+        "next": "timeout_message_end"
+      },
+      "fields": [
+        {
+          "name": "user_name",
+          "type": "text",
+          "required": true
+        },
+        {
+          "name": "user_age",
+          "type": "number",
+          "required": true
+        },
+        {
+          "name": "user_email",
+          "type": "email",
+          "required": false
+        }
+      ]
+    },
+    {
+      "id": "process_data_script",
+      "name": "Process User Data",
+      "type": "script",
+      "next": "check_age_gateway",
+      "script": {
+        "code": "Y29uc29sZS5sb2coJ1Byb2Nlc3NpbmcgZGF0YScpOwpwcm9jZXNzX2RhdGEucHJvY2Vzc2VkX2F0ID0gbmV3IERhdGUoKS50b1N0cmluZygpOwppZiAoZnVuY3Rpb24oKSB7IHJldHVybiBwcm9jZXNzX2RhdGEudXNlcl9hZ2UgPiAyNTsgfSgpKSB7IHByb2Nlc3NfZGF0YS5pc19hZHVsdCA9IHRydWU7IH0gZWxzZSB7IHByb2Nlc3NfZGF0YS5pc19hZHV0ID0gZmFsc2U7IH0="
+      }
+    },
+    {
+      "id": "check_age_gateway",
+      "name": "Age Gateway",
+      "type": "gateway",
+      "conditions": [
+        {
+          "when": "user_age >= 30",
+          "next": "adult_path_end"
+        },
+        {
+          "else": true,
+          "next": "under_age_end"
+        }
+      ]
+    },
+    {
+      "id": "adult_path_end",
+      "name": "Adult Path End",
+      "type": "end",
+      "html": "<h1>Welcome, Adult!</h1><p>Your data: {{user_name}}, {{user_age}}</p>"
+    },
+    {
+      "id": "under_age_end",
+      "name": "Under Age End",
+      "type": "end",
+      "html": "<h1>Sorry, you are under age.</h1><p>Your data: {{user_name}}, {{user_age}}</p>"
+    },
+    {
+      "id": "timeout_message_end",
+      "name": "Timeout End",
+      "type": "end",
+      "html": "<h1>Form Timeout!</h1><p>Your submission timed out. Please try again later.</p>"
+    }
+  ]
+}

@@ -1,0 +1,51 @@
+{
+  "id": "approval_process",
+  "name": "Simple Approval Process",
+  "meta": {
+    "description": "A basic workflow for demonstrating approval."
+  },
+  "nodes": [
+    {
+      "id": "start_node",
+      "type": "start",
+      "name": "Start",
+      "next": "request_approval"
+    },
+    {
+      "id": "request_approval",
+      "type": "form",
+      "name": "Request Approval",
+        "fields": [
+          {
+            "id": "request_details",
+            "label": "Details",
+            "type": "textarea"
+          },
+          {
+            "id": "amount",
+            "label": "Amount",
+            "type": "number"
+          }
+        ],
+      "next": "end_node",
+      "timeout": {
+        "duration": "1m",
+        "next": "timeout_handler"
+      }
+    },
+    {
+      "id": "timeout_handler",
+      "type": "script",
+      "name": "Handle Timeout",
+      "script": {
+        "code": "Y29uc29sZS5sb2coIlJlcXVlc3QgZm9yIGluc3RhbmNlICIrIHByb2Nlc3NfZGF0YS5pbnN0YW5jZUlEICsgIiB0aW1lZCBvdXQhIik7CnByb2Nlc3NfZGF0YS5zdGF0dXMgPSAiaGltYWNob3V0IjsK"
+      },
+      "next": "end_node"
+    },
+    {
+      "id": "end_node",
+      "type": "end",
+      "name": "End Process"
+    }
+  ]
+}
