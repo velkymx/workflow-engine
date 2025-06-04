@@ -1,6 +1,6 @@
 # workflow-engine: A Go-based Workflow Engine
 
-`jbpmn-engine` is a lightweight, opinionated workflow engine built in Go, designed to manage long-running business processes with persistent state. Inspired by BPMN concepts, it allows you to define workflows using JSON, execute them, and track their progress through various nodes. The engine supports common workflow patterns like sequential tasks, conditional branching (gateways), script execution, human interaction (forms), event-driven transitions (signals), and time-based progression (timeouts).
+`workflow-engine` is a lightweight, opinionated workflow engine built in Go, designed to manage long-running business processes with persistent state. Inspired by BPMN concepts, it allows you to define workflows using JSON, execute them, and track their progress through various nodes. The engine supports common workflow patterns like sequential tasks, conditional branching (gateways), script execution, human interaction (forms), event-driven transitions (signals), and time-based progression (timeouts).
 
 A core feature of this engine is its robust persistence layer, which uses SQLite to store the state of workflow definitions, running instances, and, critically, **individual node executions**, each with its own unique identifier (UUID) for comprehensive auditing and debugging.
 
@@ -30,8 +30,8 @@ These instructions will get you a copy of the project up and running on your loc
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/jbpmn-engine.git # Replace with actual repo URL
-    cd jbpmn-engine
+    git clone https://github.com/your-username/workflow-engine.git # Replace with actual repo URL
+    cd workflow-engine
     ```
 2.  **Initialize Go modules and download dependencies:**
     ```bash
