@@ -30,7 +30,7 @@ These instructions will get you a copy of the project up and running on your loc
 
 1.  **Clone the repository:**
     ```bash
-    git clone https://github.com/your-username/workflow-engine.git # Replace with actual repo URL
+    git clone https://github.com/velkymx/workflow-engine.git # Replace with actual repo URL
     cd workflow-engine
     ```
 2.  **Initialize Go modules and download dependencies:**
